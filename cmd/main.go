@@ -1,68 +1,31 @@
 package main
 
 import (
-	"encoding/json"
-	"io"
 	"log"
 	"net/http"
-	"os"
+
+	"github.com/eXoterr/FManager/handlers"
+	"github.com/gin-gonic/gin"
 )
 
-func dirHandler(w http.ResponseWriter, r *http.Request) {
-	path := getPath(r)
-	files, err := os.ReadDir(path)
-	if err != nil {
-		log.Println(err)
-		return
-	}
-
-	listing := []string{}
-
-	for _, file := range files {
-		if file.IsDir() {
-			listing = append(listing, file.Name()+"/")
-		} else {
-			listing = append(listing, file.Name())
-		}
-	}
-
-	j, err := json.Marshal(listing)
-	if err != nil {
-		log.Println(err)
-		return
-	}
-
-	w.Header().Set("Access-Control-Allow-Origin", "*")
-
-	w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
-
-	w.Write(j)
-}
-
 func main() {
-	http.HandleFunc("/pwd", dirHandler)
-	http.HandleFunc("/mkdir", mkDirHandler)
+	server := gin.New()
+	server.POST("/pwd", cors(handlers.DirHandler))
+	server.POST("/mkdir", cors(handlers.MKDirHandler))
+	server.POST("/mv", cors(handlers.MoveFilesHandler))
 
-	http.ListenAndServe("127.0.0.1:5001", nil)
-}
-
-func mkDirHandler(w http.ResponseWriter, r *http.Request) {
-	path := getPath(r)
-
-	err := os.Mkdir(path, os.FileMode(int(0777)))
-
+	err := http.ListenAndServe("127.0.0.1:5001", server)
 	if err != nil {
-		log.Println(err)
-		return
+		log.Fatal(err)
 	}
 }
 
-func getPath(r *http.Request) string {
-	buffer, err := io.ReadAll(r.Body)
-	if err != nil {
-		log.Println(err)
-		return ""
-	}
+func cors(next gin.HandlerFunc) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		c.Writer.Header().Set("Access-Control-Allow-Origin", "*")
 
-	return string(buffer)
+		c.Writer.Header().Set("Access-Control-Allow-Headers", "Content-Type")
+
+		next(c)
+	}
 }
