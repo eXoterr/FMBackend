@@ -17,7 +17,7 @@ func DirHandler(c *gin.Context) {
 		return
 	}
 
-	listing := []string{}
+	listing := []File{}
 
 	for _, file := range files {
 		fullPath := filepath.Join(path, file.Name())
@@ -30,9 +30,15 @@ func DirHandler(c *gin.Context) {
 		}
 
 		if utils.CheckIsDir(*currentFilePath) {
-			listing = append(listing, file.Name()+"/")
+			listing = append(listing, File{
+				Name:  file.Name(),
+				IsDir: true,
+			})
 		} else {
-			listing = append(listing, file.Name())
+			listing = append(listing, File{
+				Name:  file.Name(),
+				IsDir: false,
+			})
 		}
 
 	}

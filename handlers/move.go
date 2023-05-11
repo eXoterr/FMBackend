@@ -11,13 +11,14 @@ import (
 
 type FilesToMove struct {
 	MoveTo   string `json:"to"`
-	FileList []file `json:"files"`
+	FileList []File `json:"files"`
 }
 
-type file struct {
+type File struct {
 	Name string `json:"name"`
 	// Type string `json:"type"`
-	Path string `json:"path"`
+	Path  string `json:"path,omitempty"`
+	IsDir bool   `json:"isdir"`
 }
 
 func MoveFilesHandler(c *gin.Context) {
