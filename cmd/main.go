@@ -4,8 +4,11 @@ import (
 	"log"
 	"net/http"
 
+	_ "github.com/eXoterr/FManager/docs"
 	"github.com/eXoterr/FManager/handlers"
 	"github.com/gin-gonic/gin"
+	swaggerFiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
 )
 
 func main() {
@@ -14,7 +17,8 @@ func main() {
 	server.POST("/mkdir", cors(handlers.MKDirHandler))
 	server.POST("/mv", cors(handlers.MoveFilesHandler))
 
-	err := http.ListenAndServe("127.0.0.1:5001", server)
+	server.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
+	err := http.ListenAndServe("0.0.0.0:5001", server)
 	if err != nil {
 		log.Fatal(err)
 	}

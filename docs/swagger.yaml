@@ -1,0 +1,53 @@
+definitions:
+  handlers.File:
+    properties:
+      isdir:
+        type: boolean
+      name:
+        type: string
+      path:
+        description: Type string `json:"type"`
+        type: string
+    type: object
+info:
+  contact: {}
+paths:
+  /mkdir:
+    post:
+      consumes:
+      - text/plain
+      parameters:
+      - description: Путь до директории
+        in: body
+        name: path
+        schema:
+          type: string
+      produces:
+      - text/plain
+      responses:
+        "200":
+          description: OK
+        "500":
+          description: Internal Server Error
+      summary: Создает папку по указанному пути
+  /pwd:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Путь до директории
+        in: body
+        name: path
+        schema:
+          type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/handlers.File'
+            type: array
+      summary: Список файлов/папок из директории
+swagger: "2.0"

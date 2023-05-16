@@ -8,6 +8,15 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+// Создает папку по указанному пути godoc
+// @Summary Создает папку по указанному пути
+// @Schemes
+// @Param path body string false "Путь до директории"
+// @Accept plain
+// @Produce plain
+// @Success 200
+// @Failure 500
+// @Router /mkdir [post]
 func MKDirHandler(c *gin.Context) {
 	path := utils.GetPath(c.Request)
 
@@ -15,6 +24,6 @@ func MKDirHandler(c *gin.Context) {
 
 	if err != nil {
 		log.Println(err)
-		return
+		c.String(500, "", err)
 	}
 }

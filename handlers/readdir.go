@@ -9,6 +9,14 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+// Список файлов/папок godoc
+// @Summary Список файлов/папок из директории
+// @Schemes
+// @Param path body string false "Путь до директории"
+// @Accept json
+// @Produce json
+// @Success 200 {object} handlers.FileList
+// @Router /pwd [post]
 func DirHandler(c *gin.Context) {
 	path := utils.GetPath(c.Request)
 	files, err := os.ReadDir(path)

@@ -10,10 +10,11 @@ import (
 )
 
 type FilesToMove struct {
-	MoveTo   string `json:"to"`
-	FileList []File `json:"files"`
+	MoveTo   string   `json:"to"`
+	FileList FileList `json:"files"`
 }
 
+type FileList []File
 type File struct {
 	Name string `json:"name"`
 	// Type string `json:"type"`
@@ -21,6 +22,15 @@ type File struct {
 	IsDir bool   `json:"isdir"`
 }
 
+// Перемещает по указанному пути godoc
+// @Summary Перемещает по указанному пути
+// @Schemes
+// @Param files body json false "Список файлов"
+// @Accept json
+// @Produce plain
+// @Success 200
+// @Failure 500
+// @Router /mkdir [post]
 func MoveFilesHandler(c *gin.Context) {
 	files := FilesToMove{}
 	body, err := io.ReadAll(c.Request.Body)
