@@ -9,9 +9,36 @@ definitions:
         description: Type string `json:"type"`
         type: string
     type: object
+  handlers.FilesToMove:
+    properties:
+      files:
+        items:
+          type: string
+        type: array
+      to:
+        type: string
+    type: object
 info:
   contact: {}
 paths:
+  /exists:
+    post:
+      consumes:
+      - text/plain
+      parameters:
+      - description: Путь до директории
+        in: body
+        name: path
+        schema:
+          type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+        "404":
+          description: Not Found
+      summary: Проверяет есть ли путь(файл/папка)
   /mkdir:
     post:
       consumes:
@@ -30,6 +57,24 @@ paths:
         "500":
           description: Internal Server Error
       summary: Создает папку по указанному пути
+  /mv:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Список файлов
+        in: body
+        name: files
+        schema:
+          $ref: '#/definitions/handlers.FilesToMove'
+      produces:
+      - text/plain
+      responses:
+        "200":
+          description: OK
+        "500":
+          description: Internal Server Error
+      summary: Перемещает по указанному пути
   /pwd:
     post:
       consumes:
@@ -50,4 +95,22 @@ paths:
               $ref: '#/definitions/handlers.File'
             type: array
       summary: Список файлов/папок из директории
+  /rm:
+    post:
+      consumes:
+      - text/plain
+      parameters:
+      - description: Путь до директории
+        in: body
+        name: path
+        schema:
+          type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+        "500":
+          description: Internal Server Error
+      summary: Удаляет папку/файл по переданному пути
 swagger: "2.0"

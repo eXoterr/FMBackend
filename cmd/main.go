@@ -1,6 +1,7 @@
 package main
 
 import (
+	"flag"
 	"log"
 	"net/http"
 
@@ -11,14 +12,25 @@ import (
 	ginSwagger "github.com/swaggo/gin-swagger"
 )
 
+var (
+	listen *string
+)
+
+func init() {
+	listen = flag.String("listen", "0.0.0.0:5001", "Listen address (0.0.0.0:5001)")
+}
+
 func main() {
+	flag.Parse()
 	server := gin.New()
 	server.POST("/pwd", cors(handlers.DirHandler))
 	server.POST("/mkdir", cors(handlers.MKDirHandler))
 	server.POST("/mv", cors(handlers.MoveFilesHandler))
+	server.POST("/rm", cors(handlers.RemoveHandler))
+	server.POST("/exists", cors(handlers.ExistsHandler))
 
 	server.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
-	err := http.ListenAndServe("0.0.0.0:5001", server)
+	err := http.ListenAndServe(*listen, server)
 	if err != nil {
 		log.Fatal(err)
 	}

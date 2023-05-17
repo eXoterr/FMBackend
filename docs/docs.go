@@ -16,6 +16,35 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
+        "/exists": {
+            "post": {
+                "consumes": [
+                    "text/plain"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "Проверяет есть ли путь(файл/папка)",
+                "parameters": [
+                    {
+                        "description": "Путь до директории",
+                        "name": "path",
+                        "in": "body",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "404": {
+                        "description": "Not Found"
+                    }
+                }
+            }
+        },
         "/mkdir": {
             "post": {
                 "consumes": [
@@ -32,6 +61,35 @@ const docTemplate = `{
                         "in": "body",
                         "schema": {
                             "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "500": {
+                        "description": "Internal Server Error"
+                    }
+                }
+            }
+        },
+        "/mv": {
+            "post": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "text/plain"
+                ],
+                "summary": "Перемещает по указанному пути",
+                "parameters": [
+                    {
+                        "description": "Список файлов",
+                        "name": "files",
+                        "in": "body",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.FilesToMove"
                         }
                     }
                 ],
@@ -76,6 +134,35 @@ const docTemplate = `{
                     }
                 }
             }
+        },
+        "/rm": {
+            "post": {
+                "consumes": [
+                    "text/plain"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "Удаляет папку/файл по переданному пути",
+                "parameters": [
+                    {
+                        "description": "Путь до директории",
+                        "name": "path",
+                        "in": "body",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "500": {
+                        "description": "Internal Server Error"
+                    }
+                }
+            }
         }
     },
     "definitions": {
@@ -90,6 +177,20 @@ const docTemplate = `{
                 },
                 "path": {
                     "description": "Type string ` + "`" + `json:\"type\"` + "`" + `",
+                    "type": "string"
+                }
+            }
+        },
+        "handlers.FilesToMove": {
+            "type": "object",
+            "properties": {
+                "files": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "to": {
                     "type": "string"
                 }
             }
